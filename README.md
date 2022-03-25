@@ -1,7 +1,7 @@
 libdns-glesys for [`libdns`](https://github.com/libdns/libdns)
 ==============================================================
 
-This package implements the [libdns interfaces](https://github.com/libdns/libdns) for Glesys, allowing you to manage DNS records.
+This package implements the [libdns interfaces](https://github.com/libdns/libdns) for [Glesys](https://glesys.se), allowing you to manage DNS records.
 It utilizes [glesys-go](https://github.com/glesys/glesys-go) for API communication.
 
 ## Usage
