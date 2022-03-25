@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 	"strconv"
 	"strings"
 	"sync"
@@ -12,6 +13,16 @@ import (
 	"github.com/glesys/glesys-go/v3"
 	"github.com/libdns/libdns"
 )
+
+var debug bool
+
+const DEBUG_KEY = "LIBDNS_GLESYS_DEBUG"
+
+func init() {
+	if b, err := strconv.ParseBool(os.Getenv(DEBUG_KEY)); err == nil && b {
+		debug = true
+	}
+}
 
 type Provider struct {
 	mutex       sync.Mutex
@@ -23,7 +34,6 @@ type Provider struct {
 func (p *Provider) client() *glesys.Client {
 	if p.clientCache == nil {
 		p.clientCache = glesys.NewClient(p.Project, p.ApiKey, "libdns-glesys/0.0.1")
-
 	}
 	return p.clientCache
 }
@@ -55,7 +65,9 @@ func (p *Provider) GetRecords(ctx context.Context, zone string) ([]libdns.Record
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	zone = cleanZ(zone)
-	log.Printf("GetRecords zone=%s", zone)
+	if debug {
+		log.Printf("GetRecords zone=%s", zone)
+	}
 	drs, err := p.client().DNSDomains.ListRecords(ctx, zone)
 	if err != nil {
 		return nil, err
@@ -68,6 +80,9 @@ func (p *Provider) GetRecords(ctx context.Context, zone string) ([]libdns.Record
 		r := gle2lib(&dr)
 		records[i] = r
 	}
+	if debug {
+		log.Printf("GetRecords result: %+v", records)
+	}
 	return records, nil
 
 }
@@ -77,7 +92,9 @@ func (p *Provider) AppendRecords(ctx context.Context, zone string, records []lib
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	zone = cleanZ(zone)
-	log.Printf("AppendRecords zone=%s", zone)
+	if debug {
+		log.Printf("AppendRecords zone=%s", zone)
+	}
 	results := []libdns.Record{}
 	for _, r := range records {
 		param := glesys.AddRecordParams{
@@ -97,6 +114,9 @@ func (p *Provider) AppendRecords(ctx context.Context, zone string, records []lib
 		}
 		results = append(results, gle2lib(dr))
 	}
+	if debug {
+		log.Printf("AppendRecords result: %+v", results)
+	}
 	return results, nil
 }
 
@@ -106,7 +126,9 @@ func (p *Provider) SetRecords(ctx context.Context, zone string, records []libdns
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	zone = cleanZ(zone)
-	log.Printf("SetRecords zone=%s", zone)
+	if debug {
+		log.Printf("SetRecords zone=%s", zone)
+	}
 	results := []libdns.Record{}
 	for _, r := range records {
 		id, err := strconv.Atoi(r.ID)
@@ -138,7 +160,9 @@ func (p *Provider) DeleteRecords(ctx context.Context, zone string, records []lib
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 	zone = cleanZ(zone)
-	log.Printf("DeleteRecords zone=%s", zone)
+	if debug {
+		log.Printf("DeleteRecords zone=%s", zone)
+	}
 	results := []libdns.Record{}
 	for _, r := range records {
 		if r.ID == "" {
@@ -154,6 +178,9 @@ func (p *Provider) DeleteRecords(ctx context.Context, zone string, records []lib
 			return results, err
 		}
 		results = append(results, r)
+	}
+	if debug {
+		log.Printf("DeleteRecords results: %+v", results)
 	}
 	return results, nil
 }
