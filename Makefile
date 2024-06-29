@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2024 Peter Magnusson <me@kmpm.se>
+#
+# SPDX-License-Identifier: CC0-1.0
 
 .PHONY: all tidy test audit
 

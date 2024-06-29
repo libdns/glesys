@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Peter Magnusson <me@kmpm.se>
+//
+// SPDX-License-Identifier: CC0-1.0
+
 module github.com/libdns/glesys
 
 go 1.21

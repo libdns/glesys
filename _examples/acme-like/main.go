@@ -1,3 +1,7 @@
+// SPDX-FileCopyrightText: 2024 Peter Magnusson <me@kmpm.se>
+//
+// SPDX-License-Identifier: MIT
+
 package main
 
 import (

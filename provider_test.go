@@ -1,3 +1,5 @@
+// SPDX-FileCopyrightText: 2022 Peter Magnusson <me@kmpm.se>
+// SPDX-License-Identifier: MIT
 package glesys
 
 import (
