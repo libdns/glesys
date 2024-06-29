@@ -9,11 +9,11 @@ import (
 	"github.com/libdns/libdns"
 )
 
-func TestProvider_GetRecords(t *testing.T) {
+func TestProvider_GetRecordsIntegration(t *testing.T) {
 	skipUnauth(t)
 	type fields struct {
 		Project string
-		ApiKey  string
+		APIKey  string
 	}
 	type args struct {
 		ctx  context.Context
@@ -25,7 +25,7 @@ func TestProvider_GetRecords(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"first",
+		{"first_test",
 			fields{os.Getenv("GLESYS_PROJECT"), os.Getenv("GLESYS_KEY")},
 			args{context.TODO(), os.Getenv("GLESYS_ZONE")},
 			false,
@@ -36,7 +36,7 @@ func TestProvider_GetRecords(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Provider{
 				Project: tt.fields.Project,
-				ApiKey:  tt.fields.ApiKey,
+				APIKey:  tt.fields.APIKey,
 			}
 			got, err := p.GetRecords(tt.args.ctx, tt.args.zone)
 			if (err != nil) != tt.wantErr {
@@ -65,11 +65,11 @@ func TestProvider_GetRecords(t *testing.T) {
 	}
 }
 
-func TestProvider_AppendRecords(t *testing.T) {
+func TestProvider_AppendRecordsIntegration(t *testing.T) {
 	skipUnauth(t)
 	type fields struct {
 		Project string
-		ApiKey  string
+		APIKey  string
 	}
 	type args struct {
 		ctx     context.Context
@@ -82,7 +82,7 @@ func TestProvider_AppendRecords(t *testing.T) {
 		args    args
 		wantErr bool
 	}{
-		{"first",
+		{"create_txt_record",
 			fields{os.Getenv("GLESYS_PROJECT"), os.Getenv("GLESYS_KEY")},
 			args{
 				context.TODO(),
@@ -99,7 +99,7 @@ func TestProvider_AppendRecords(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			p := &Provider{
 				Project: tt.fields.Project,
-				ApiKey:  tt.fields.ApiKey,
+				APIKey:  tt.fields.APIKey,
 			}
 			got, err := p.AppendRecords(tt.args.ctx, tt.args.zone, tt.args.records)
 			if (err != nil) != tt.wantErr {

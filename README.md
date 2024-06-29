@@ -26,3 +26,23 @@ To do everything this library can do the Glesys API user needs permissions to th
 - Domain.deleterecord
 - Domain.listrecords
 - Domain.updaterecord
+
+## Development
+### Testing
+```shell
+make test
+```
+
+If you have a domain available at glesys and want to do integration testing
+then set 3 environment variables first.
+```shell
+export GLESYS_PROJECT="<your glesys project id>"
+export GLESYS_KEY="<your glesys api-key>"
+export GLESYS_ZONE="<yourdomain.touse>"
+```
+This will leave a `TXT` record called `_libdns-test` with the text of the current date and time 
+in your DNS settings.
+
+There is a "secret" way of enabling some debug output from libdns.
+If you set the environment key `LIBDNS_GLESYS_DEBUG` to `true` (or something
+parsable to a boolean true) then you will see som classic debug prints.

@@ -10,37 +10,40 @@ import (
 	"sync"
 	"time"
 
-	"github.com/glesys/glesys-go/v3"
+	"github.com/libdns/glesys/internal/impl"
 	"github.com/libdns/libdns"
 )
 
 var debug bool
 
-const DEBUG_KEY = "LIBDNS_GLESYS_DEBUG"
+const _DebugKey_ = "LIBDNS_GLESYS_DEBUG"
 
 func init() {
-	if b, err := strconv.ParseBool(os.Getenv(DEBUG_KEY)); err == nil && b {
+	if b, err := strconv.ParseBool(os.Getenv(_DebugKey_)); err == nil && b {
 		debug = true
 	}
 }
 
 type Provider struct {
 	mutex       sync.Mutex
-	clientCache *glesys.Client
+	clientCache *impl.Client
 	Project     string `json:"project,omitempty"`
-	ApiKey      string `json:"api_key,omitempty"`
+	APIKey      string `json:"api_key,omitempty"`
 }
 
-func (p *Provider) client() *glesys.Client {
+func (p *Provider) client() *impl.Client {
 	if p.clientCache == nil {
-		p.clientCache = glesys.NewClient(p.Project, p.ApiKey, "libdns-glesys/0.0.1")
+		p.clientCache = impl.NewClient(p.Project, p.APIKey, "libdns-glesys/0.0.2")
 	}
 	return p.clientCache
 }
+
+// cleanZ removes trailing dots and spaces from a zone name.
 func cleanZ(z string) string {
 	return strings.TrimRight(z, ". ")
 }
-func gle2lib(dr *glesys.DNSDomainRecord) libdns.Record {
+
+func gle2lib(dr *impl.DNSDomainRecord) libdns.Record {
 	r := libdns.Record{
 		ID:    strconv.Itoa(dr.RecordID),
 		Type:  dr.Type,
@@ -53,7 +56,7 @@ func gle2lib(dr *glesys.DNSDomainRecord) libdns.Record {
 	case "MX", "SRV", "URI":
 		parts := strings.Split(dr.Data, " ")
 		if p, err := strconv.Atoi(parts[0]); err == nil {
-			r.Priority = p
+			r.Priority = uint(p)
 			r.Value = parts[1]
 		}
 	}
@@ -97,7 +100,7 @@ func (p *Provider) AppendRecords(ctx context.Context, zone string, records []lib
 	}
 	results := []libdns.Record{}
 	for _, r := range records {
-		param := glesys.AddRecordParams{
+		param := impl.AddRecordParams{
 			DomainName: zone,
 			Host:       r.Name,
 			Data:       r.Value,
@@ -135,7 +138,7 @@ func (p *Provider) SetRecords(ctx context.Context, zone string, records []libdns
 		if err != nil && r.ID != "" {
 			return results, err
 		}
-		param := glesys.UpdateRecordParams{
+		param := impl.UpdateRecordParams{
 			RecordID: id,
 			Host:     r.Name,
 			Data:     r.Value,
