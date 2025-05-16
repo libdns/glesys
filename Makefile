@@ -28,3 +28,8 @@ audit:
 	go run golang.org/x/vuln/cmd/govulncheck@latest ./...
 
 
+no-dirty:
+	@echo "checking for uncommitted changes..."
+	git diff --exit-code
+	git diff --cached --exit-code
+
