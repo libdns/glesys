@@ -366,18 +366,16 @@ func (p *Provider) DeleteRecords(ctx context.Context, zone string, records []lib
 	}
 	results := []libdns.Record{}
 	for _, m := range matching {
-		if len(m.Matches) >= 0 {
-			for _, dr := range m.Matches {
-				err = p.client().DNSDomains.DeleteRecord(ctx, dr.RecordID)
-				if err != nil {
-					return results, err
-				}
-				r, err := toLibDNS(&dr)
-				if err != nil {
-					return results, err
-				}
-				results = append(results, r)
+		for _, dr := range m.Matches {
+			err = p.client().DNSDomains.DeleteRecord(ctx, dr.RecordID)
+			if err != nil {
+				return results, err
 			}
+			r, err := toLibDNS(&dr)
+			if err != nil {
+				return results, err
+			}
+			results = append(results, r)
 		}
 	}
 	if debug {
